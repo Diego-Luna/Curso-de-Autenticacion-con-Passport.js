@@ -75,8 +75,36 @@ JSON Web Tokens Auth
 
 Ventajas de JWT
 
-- 1.- No requiere del backend para saber si está autenticado porque lleva una firma (post autenticación)
-- 2.- El backend puede recibir multiples request de multiples clientes (sólo necesita saber si el token está bien firmado)
-- 3.- El cliente conoce los permisos que tiene, por lo que no los tiene que bajar de base de datos
+- 1.- No requiere del backend para saber si está autenticado porque lleva una f
+      irma (post autenticación)
+- 2.- El backend puede recibir multiples request de multiples clientes 
+      (sólo necesita saber si el token está bien firmado)
+- 3.- El cliente conoce los permisos que tiene, por lo que no los tiene que 
+      bajar de base de datos
 
 ///////////////////// Autenticación tradicional vs JWT /////////////////////
+
+///////////////////// Firmando y Verificando nuestro JWT /////////////////////
+
+Para firmar nuestro token utilizaremos un paquete de node llamado jsonwebtoken 
+y al usarlo en nuestro código se verá de esta manera:
+
+- jwt.sign({ sub: user.id }, 'secret', options);
+
+El primer atributo que recibe es el payload o sea los datos que guardaremos 
+en ese token. De segundo atributo recibe una clave secreta con la cual será 
+firmado y finalmente podremos pasarle opciones si es nuestro caso.
+
+Para verificar nuestro token lo haremos de la siguiente manera:
+
+- jwt.verify(token, 'secret', function(err, decoded){});
+
+Como primer atributo recibiremos el token, de segundo atributo el secreto de 
+la firma y como tercer argumento (opcional) recibiremos el token decodificado.
+
+- 1.- Vamos a inicializar nuestro proyecto con npm init -y
+- 2.- Crearemos el archivo index.js
+- 3.- Vamos a instalar los paquetes necesarios con npm i jsonwebtoken
+- 4.- En el index.js vamos a hacer toda la lógica de nuestra aplicación
+
+///////////////////// Firmando y Verificando nuestro JWT /////////////////////
