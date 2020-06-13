@@ -1,0 +1,82 @@
+///////////////////// Stack de seguridad moderno /////////////////////
+
+Anteriormente las compañías se comunicaban mediante un intranet que actualmente 
+ha sido reemplazado con un stack de seguridad moderno usando:
+
+- JSON Web Tokens: Nos permite comunicarnos entre dos clientes de una manera más segura.
+- OAuth 2.0: Un estándar de la industria que nos permite implementar autorización.
+- OpenID Connect: Es una capa de autenticación que funciona por encima de Oauth 2.0.
+
+///////////////////// Stack de seguridad moderno /////////////////////
+
+///////////////////// ¿Qué es la autenticación y la autorización ? /////////////////////
+
+La autenticación sirve para verificar la identidad de un usuario, verificar si el 
+usuario existe y si los datos que está colocando son correctos.
+
+La autorización es la acción de permitir a un usuario acceso limitado a nuestro 
+recursos.
+
+///////////////////// ¿Qué es la autenticación y la autorización ? /////////////////////
+
+///////////////////// Introducción a las sesiones /////////////////////
+
+Cuando visitamos un sitio por primera vez se crea una sesión con los ajustes que 
+se configuran. Por ejemplo, en un sitio web de reserva de hoteles, a medida que 
+buscamos y ponemos preferencias de precios y demás, éstas se irán guardando en 
+dicha sesión. Y luego estos datos se convertirán en un ID que será almacenado 
+en una cookie en tu navegador.
+
+///////////////////// Introducción a las sesiones /////////////////////
+
+
+///////////////////// Anatomía de un JWT /////////////////////
+
+JWT (json web token) Link a documentacion: (https://tools.ietf.org/html/rfc7519)
+JSON Web Token (JWT) es un estándar abierto que define una forma compacta y
+autónoma para transmitir información de forma segura entre las partes como
+un objeto JSON.
+Esta información se puede verificar y confiar porque está firmada digitalmente.
+
+<h3>Estructura</h3>
+Los JWT se componen de 3 partes:
+
+HEADER: Alg y typ
+PAYLOAD: Claims (diccionario con informacion no sensible, preferiblemente corta)
+SIGNATURE: header y payload encriptado
+<h4>alg:</h4>
+Algoritmo de encriptacion que puede ser Sincrono o Asincrono.
+
+Algoritmo sincrono: Para Autentificacion en el backend
+Algoritmo asíncrono: Para Autentificacion con llave publica y privada.
+
+///////////////////// Anatomía de un JWT /////////////////////
+
+///////////////////// Autenticación tradicional vs JWT /////////////////////
+
+Respuesta a:
+Autenticación tradicional vs JWT
+Auth tradicional
+- 1.- Se crea una sesión (el id se almacena en una cookie)
+- 2.- Los request de ahí en adelante (hasta que expire) vienen con la información 
+      de la cookie
+
+Problemas del auth tradicional
+
+Las SPA no refrescan todas las veces (y no saben si hubieron cambios en la sesión)
+Las REST API no deberían tener estado, al crear sesiones se crea estado.Para 
+microservicios las sesiones de una sóla máquina no fluyen naturalmente hacia 
+varios clientes. El control de acceso requiere que vayamos a base de datos
+
+JSON Web Tokens Auth
+- 1.- En el proceso de Autenticación el server firma un token
+- 2.- A partir de ese momento el cliente almacena el token en memoria y en una cookie
+- 3.- Todos los request de ahí en adelante llevan el token
+
+Ventajas de JWT
+
+- 1.- No requiere del backend para saber si está autenticado porque lleva una firma (post autenticación)
+- 2.- El backend puede recibir multiples request de multiples clientes (sólo necesita saber si el token está bien firmado)
+- 3.- El cliente conoce los permisos que tiene, por lo que no los tiene que bajar de base de datos
+
+///////////////////// Autenticación tradicional vs JWT /////////////////////
