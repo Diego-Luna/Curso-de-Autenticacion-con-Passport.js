@@ -226,3 +226,61 @@ En el paso 2, si se esta usando alguna librería para manejo de estado como redu
 se puede implementar un middleware que detecte este error y proceda con el paso 3.
 
 ///////////////////// Buenas prácticas con JWT /////////////////////
+
+///////////////////// ¿Qué son las cookies y cómo implementar el manejo de sesión? /////////////////////
+
+Una cookie es un archivo creado por un sitio web que tiene pequeños pedazos de 
+datos almacenados en él. Su propósito es identificar al usuario mediante el 
+almacenamiento de su historial.
+
+Las cookie session son cookies que tienen un corto periodo de vida ya que son 
+removidas cuando el navegador o la pestaña se cierran.
+
+Las persistent cookies se usan generalmente para guardar información de interés 
+para el usuario.
+
+Las secure cookies almacenan datos de forma cifradas para que terceros no puedan 
+tener acceso a ellas, se suelen usar en conexiones HTTPS (Conexiones seguras).
+
+Hay leyes sobre cookies que debes seguir al pie de la letra:
+
+Avisarle al usuario que estás haciendo uso de cookies en tu sitio para guardar información
+Es necesario que el usuario de su consentimiento para manejar cookies en tu sitio.
+
+En el codigo instalamos :
+- npm i express express-session
+(express-session nos va ayudar con el manejo de cookies)
+
+- npm i -D nodemon
+(-D significa dependencias de desarrollo)
+
+({-
+
+const express = require('express');
+// permite el manejo de las seciones
+const session = require('express-session');
+
+const app = express();
+
+// resave: false (que no guarde la cokie cada bes que se aga un cambio)
+// saveUninitialized: false (que cuando la cokie no se alla inicialisado no me la guarde por defecto)
+// secret: (deve tener un minimo de de 256 bits, cuando se valla asifrar lo va a utilisar)
+app.use(session({
+  resave: false,
+  saveUninitialized: false,
+  secret: 'keyboard cat',
+}));
+
+app.get('/', (req, res) => {
+  req.session.count = req.session.count? req.session.count+1 : 1;
+  // ponemos el estado 200, que todo esta bien
+  res.status(200).json({hello: 'word',counter : req.session.count});
+})
+
+app.listen(3000, () => {
+  console.log('esta corriendo el el puerto 300');
+});
+
+-})
+
+///////////////////// ¿Qué son las cookies y cómo implementar el manejo de sesión? /////////////////////
