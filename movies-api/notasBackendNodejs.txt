@@ -1,0 +1,521 @@
+///////////////////////// Diferencias entre Node.js y JavaScript /////////////////////////
+
+En JavaScript del lado del cliente tenemos el DOM y el CSSDOM así como el objeto window para manipular los elementos de nuestra página además una serie de APIs, aquí unos ejemplos:
+
+fetch
+SessionStorage y LocalStorage
+canvas
+bluetooth
+audio
+web authentication
+Mientras que en Node.js no tenemos un DOM ni un objeto windows, lo que sí tenemos son una serie de módulos que nos permiten interactuar con los recursos de la máquina como el sistema operativo y el sistema de archivos, por ejemplo:
+
+os
+fs
+http
+util
+debugger
+stream
+events
+
+
+///////////////////////// Diferencias entre Node.js y JavaScript /////////////////////////
+
+///////////////////////// Introducción a streams /////////////////////////
+
+Los Streams son una colección de datos como los arrays o strings sólo que se van procesando pedazo por pedazo, esta capacidad los hace muy poderosos porque podemos manejar una gran cantidad de datos de manera óptima.
+
+ejemplo de de manera desbordante, : "learning-node/streams/file-server.js"
+
+ejemplo de manera mas eficiente, : "learning-node/streams/stream-server.js"
+
+///////////////////////// Introducción a streams /////////////////////////
+
+///////////////////////// Readable y Writable streams /////////////////////////
+Los Readable y Writeable streams tienen los siguientes eventos y funciones respectivamente:
+
+Readable
+  Eventos
+    data. Se dispara cuando recibe datos.
+    end. Se dispara cuando termina de recibir datos.
+    error. Se dispara cuando hay un error.
+  Funciones
+    pipe
+    unpipe
+    read
+    push
+Writeable
+  Eventos
+    drain. Se dispara cuando emite datos.
+    finish. Se dispara cuando termina de emitir.
+    error. Se dispara cuando hay un error.
+  Funciones
+    write
+    end
+Recuerda que tienen estos eventos porque los heredan de la clase EventEmitter.
+
+///////////////////////// Readable y Writable streams /////////////////////////
+
+///////////////////////// Duplex y Transforms streams /////////////////////////
+Ambos sirven para simplificar nuestro código:
+
+Duplex: implementa los métodos write y read a la vez. ejemplo: "learning-node/streams/Duplex.js"
+Transform: es similar a Duplex pero con una sintaxis más corta. ejemplo: "learning-node/streams/Transforms.js"
+
+///////////////////////// Duplex y Transforms streams /////////////////////////
+
+///////////////////////// Sistema operativo y sistema de archivos /////////////////////////
+
+En esta clase vemos dos módulos básicos:
+
+  os. Sirve para consultar y manejar los recursos del sistema operativo.  ejemplo:"learning-node/so-archivos/os.js"
+  fs. Sirve para administrar (copiar, crear, borrar etc.) archivos y directorios.
+  (ejemplos: 
+    asincrono :(learning-node/so-archivos/async.js)
+    sincrono: (learning-node/so-archivos/sync-files.js)
+  )
+
+Los métodos contenidos en estos módulos (y en todo Node.js) funcionan de forma asíncrona por default, pero también se pueden ejecutar de forma síncrona, por ejemplo el método readFile() tiene su versión síncrona readFileSync().
+
+///////////////////////// Sistema operativo y sistema de archivos /////////////////////////
+
+///////////////////////// Administrar directorios y archivos /////////////////////////
+
+podemos crear carpetas con node: ejemplo:('learning-node/so-archivos/mkdir.js')
+podemos copiar archivos con node: ejemplo:('learning-node/so-archivos/copy.js')
+
+///////////////////////// Administrar directorios y archivos /////////////////////////
+
+///////////////////////// Consola, utilidades y debugging /////////////////////////
+
+Para crear una consola personalisable ,ejemplo:"learning-node/utilidades-debug/console-cass.js"
+Para poder dar opciones en en la consola, ejemplo:"learning-node/utilidades-debug/console-utils.js"
+Para poder debugear, o utilidades, ejemplo: "learning-node/utilidades-debug/util-deprecate.js"
+
+///////////////////////// Consola, utilidades y debugging /////////////////////////
+
+///////////////////////// Clusters y procesos hijos /////////////////////////
+
+na sola instancia de Node.js corre un solo hilo de ejecución. Para tomar ventaja de los sistemas con multiples core, necesitamos lanzar un cluster de procesos de Node.js para manejar la carga.
+
+El módulo cluster nos permite la creación fácil de procesos hijos que comparten el mismo puerto del servidor. Veamos un ejemplo en código:
+
+ejemplo: "learning-node/utilidades-debug/Clusters-hijos.js"
+
+///////////////////////// Clusters y procesos hijos /////////////////////////
+
+///////////////////////// Creando tu primer servidor con Express.js /////////////////////////
+
+ponemos en la terminal "npm init -y",nos genera un package.json, va mos a modificar
+y poner un comando para el desarrollo y otro para produccion. ver ("package.json")
+
+Configuramos .eslintrc.json, para que en la ora de haser tests, no haya promemas. ver(".eslintrc.json")
+
+prettierrc es una modalidad para poder formatear nuestro codigo, adonde podemos poner unas reglas a seguir ver(.prettierrc.json)
+{
+  "tabWidth": 2, //el esacio es de 2
+  "semi": true,  //vamos a tener punto y coma
+  "singleQuote": true //vamos a manejar ' envaes de ".
+}
+
+Vamos a descargar de pendencias que van a hcer solo de desarrollo:
+-  npm i -D eslint eslint-config-prettier eslint-plugin-prettier prettier
+
+para que el codigo aga el formatea automatico cuando a gamos el comit y lo subamos al servidor.
+  npx mrm lint-staged
+
+package.json:
+  {
+    "lint-staged": {
+    "*.js": "eslint --cache --fix"
+  }
+  }
+
+///////////////////////// Creando tu primer servidor con Express.js /////////////////////////
+
+///////////////////////// Request y Response Objects /////////////////////////
+
+El objeto req (Request) en Express representa el llamado HTTP y tiene diferentes propiedades del llamado, como la cadena de texto query (Query params), los parámetros de la URL (URL params), el cuerpo (Body), los encabezados (HTTP headers), etc.
+
+Para acceder al req basta con acceder al primer parámetro de nuestros router handlers (router middleware) ó middleware.
+
+Como por ejemplo así lo hemos visto siempre:
+
+-  app.get("/user/:id", function(req, res) {
+-  res.send("user " + req.params.id);
+- });
+
+Exploremos las propiedades más importantes
+req.body
+Contiene los pares de llave-valor de los datos enviados en el cuerpo (body) del llamado (request). Por defecto es undefined pero es establecido cuando se usa algún “body-parser” middleware como 
+- body-parser y multer.
+
+En Postman cuando hacemos un request y enviamos datos en la pestaña Body, estos middlewares son los que nos ayudan a entender el tipo de datos que vamos a recibir en el 
+- req.body.
+
+Aquí podemos ver como se pueden usar estos middlwares para establecer el valor del 
+- req.body:
+- const app = require("express")();
+- const bodyParser = require("body-parser");
+- const multer = require("multer");
+- const upload = multer(); // Para datos tipo multipart/form-data
+
+- app.use(bodyParser.json()); // Para datos tipo application/json
+- app.use(bodyParser.urlencoded({ extended: true })); // Para datos tipo application/x-www-form-urlencoded
+
+- app.post("/profile", upload.array(), function(req, res, next) {
+-   console.log(req.body);
+-   res.json(req.body);
+- });
+
+req.params
+Esta propiedad contiene un objeto con las propiedades equivalentes a los parámetros nombrados en la ruta. Por ejemplo, si tenemos una ruta de la forma /user/:name entonces la propiedad name está disponible como req.params.name y allí podremos ver su valor. Supongamos que llamaramos a la ruta con /user/glrodasz, entonces el valor de req.params.name sería glrodasz. Este objeto por defecto tiene el valor de un objeto vacío {}.
+
+- // GET /user/glrodasz
+- req.params.name;
+- // => "glrodasz"
+- req.query
+
+Esta propiedad contiene un objeto con las propiedades equivalentes a las cadenas de texto query de la ruta. Si no hay ninguna cadena de texto query tendrá como valor por defecto un objeto vacío {}.
+
+- req.query.q;
+- // => "tobi ferret"
+
+- // GET /shoes?order=desc&shoe[color]=blue&shoe[type]=converse
+- req.query.order;
+- // => "desc"
+
+- req.query.shoe.color;
+- // => "blue"
+
+- req.query.shoe.type;
+- // => "converse"
+
+Más información sobre los diferentes formatos que puede tener el body: https://developer.mozilla.org/es/docs/Web/HTTP/Methods/POST
+Más información sobre los query strings en: https://es.wikipedia.org/wiki/Query_string y https://tools.ietf.org/html/rfc3986#section-3.4
+
+Response Object
+El objeto res representa la respuesta HTTP que envía una aplicación en Express.
+
+Para acceder al res basta con acceder al segundo parámetro de nuestros router handlers (router middleware) o middleware.
+
+Como por ejemplo así lo hemos visto siempre:
+
+- app.get("/user/:id", function(req, res) {
+-   res.send("user " + req.params.id);
+- });
+Pero también funcionaría sin problemas:
+
+- app.get("/user/:id", function(request, response) {
+-   response.send("user " + request.params.id);
+- });
+
+Exploremos los métodos más comunes
+res.end()
+Finaliza el proceso de respuesta. Este método viene realmente del core de Node.js, específicamente del método response.end() de http.ServerResponse.
+
+Se usa para finalizar el request rápidamente sin ningún dato. Si necesitas enviar datos se debe usar res.send() y res.json().
+
+- res.end();
+- res.status(404).end();
+res.json()
+Envía una respuesta JSON. Este método envía una respuesta (con el content-type correcto) y convierte el parámetro enviado a una cadena de texto JSON haciendo uso de JSON.stringify().
+
+El parámetro puede ser cualquier tipo de JSON, incluido un objeto, un arreglo, una cadena de texto, un boolean, número, null y también puede ser usado para convertir otros valores a JSON.
+
+- res.json(null);
+- res.json({ user: "tobi" });
+- res.status(500).json({ error: "message" });
+
+res.send()
+Envía una respuesta HTTP. El parámetro body puede ser un objeto tipo Buffer, una cadena de texto, un objeto, o un arreglo. Por ejemplo:
+
+- res.send(Buffer.from("whoop"));
+- res.send({ some: "json" });
+- res.send("<p>some html</p>");
+- res.status(404).send("Sorry, we cannot find that!");
+- res.status(500).send({ error: "something blew up" });
+
+///////////////////////// Request y Response Objects /////////////////////////
+
+///////////////////////// Anatomía de una API Restful /////////////////////////
+
+REST (Representational State Transfer) es un estilo de arquitectura para construir web services, no es un estándar pero si una especificación muy usada.
+
+Las peticiones HTTP van acompañadas de un “verbo” que define el tipo de petición:
+
+> GET. Lectura de datos.
+> PUT. Reemplazar datos.
+> PATCH. Actualizar datos en un recurso específico.
+> POST. Creación de datos.
+> DELETE. Eliminación de datos.
+No es recomendable habilitar un endpoint de tipo PUT y DELETE para toda nuestra colección de datos, sólo hacerlos para recursos específicos, ya que no queremos que por error se puedan borrar todos nuestros datos
+
+///////////////////////// Anatomía de una API Restful /////////////////////////
+
+///////////////////////// Implementando un CRUD en Express.js /////////////////////////
+
+Las siglas CRUD vienen de las palabras en inglés:
+
+> Create - crear
+> Read - leer
+> Update - actualizar
+> Delete - eliminar
+
+///////////////////////// Implementando un CRUD en Express.js /////////////////////////
+
+///////////////////////// Implementando una capa de servicios /////////////////////////
+
+La arquitectura tradicional MVC se queda corta en aplicaciones modernas, por eso necesitamos una arquitectura diferente cómo la Clean Arquitecture que tiene una capa de servicios para manejar la lógica de negocio.
+
+///////////////////////// Implementando una capa de servicios /////////////////////////
+
+///////////////////////// ¿Qué es un middleware? Capa de manejo de errores usando un middleware /////////////////////////
+
+Un Middleware es una capa intermedia que intercepta la información de algo, un middleware se define por defecto con una función del siguiente formato:
+
+Formato:
+- function(req,res,next){
+- 	next()
+- }
+Donde:
+req es un httpRequest() con la información de la petición
+res es un httpResponse() con la respuesta de la petición
+next es un callback de la siguiente función a llamar
+
+Para manegar errores vamos a usar los middleware, en "utils/middleware/errorHandlers.js",
+
+///////////////////////// ¿Qué es un middleware? Capa de manejo de errores usando un middleware /////////////////////////
+
+///////////////////////// Manejo de errores asíncronos y síncronos en Express /////////////////////////
+
+El manejo de errores en Express es el proceso de capturar un error de manera asíncrona como
+síncrona . Por defecto Express viene con un manejador de errores por defecto, así que no es 
+necesario escribir uno para empezar a usarlo.
+
+Los errores que ocurren de manera síncrona dentro un manejador de rutas o un middleware no 
+requieren trabajo extra. Si un código síncrono lanza un error Express automáticamente 
+capturará el error. Por ejemplo:
+
+- app.get("/", function(req, res) {
+-   throw new Error("BROKEN"); // Express capturara este error por sí solo.
+- });
+
+Para errores que se retornan desde funciones asíncronas invocadas desde un manejador de 
+ruta o un middleware, es necesario pasar el error como argumento a la función next(), de esta 
+manera Express capturará el error y lo procesará. Por ejemplo:
+
+- app.get("/", function(req, res, next) {
+-   fs.readFile("/file-does-not-exist", function(err, data) {
+-     if (err) {
+-       next(err); // Se debe pasar el error a Express.
+-     } else {
+-       res.send(data);
+-     }
+-   });
+- });
+
+Es responsabilidad de nosotros capturar errores que puedan ocurrir en código asíncrono 
+invocado desde un manejador de ruta o middleware para que Express lo procese. Por ejemplo:
+
+- app.get("/", function(req, res, next) {
+-   setTimeout(function() {
+-     try {
+-       throw new Error("BROKEN");
+-     } catch (err) {
+-       next(err);
+-     }
+-   }, 100);
+- });
+
+El ejemplo de arriba usa un bloque try...catch para capturar los errores en el código 
+asíncrono y pasarlo a Express. Si el bloque try...catch fuese omitido, Express no podría 
+capturar el error debido a que no es parte de un manejador síncrono de código.
+
+Cuando se usan funciones que retornan promesas, puedes simplemente proveer la 
+funcionalidad next al final del manejador catch de la promesa y Express automáticamente 
+capturará el error. Por ejemplo:
+
+- app.get("/", function(req, res, next) {
+-   Promise.resolve()
+-     .then(function() {
+-       throw new Error("BROKEN");
+-     })
+-     .catch(next); // Errores serán pasados a Express.
+- });
+
+///////////////////////// Manejo de errores asíncronos y síncronos en Express /////////////////////////
+
+///////////////////////// Capa de validación de datos usando un middleware /////////////////////////
+
+Creamos un middleware para validar datos: "utils/middleware/validationHandlers.js"
+
+///////////////////////// Capa de validación de datos usando un middleware /////////////////////////
+
+///////////////////////// Implementando Boom /////////////////////////
+
+Descargamos boom: link(https://github.com/hapijs/boom)
+
+Lo bamos ausar para el manejode errores. Funciona con node, y con Js. en Web.
+- npm i @hapi/boom
+
+cambiamos el :
+  "errorHandlers.js", para usar boom, 
+  "index.js" actualisamos  principal,
+  "validationHandlers.js" agregamos boom,
+  Ponemos el error 404: "notFoundHandler.js",
+
+Mas sobre Boom:
+Boom nos provee una serie de utilidades para retornar errores HTTP, cada utilidad es un objeto de respuesta de tipo Boom que incluye las siguientes propiedades:
+
+- isBoom - si es true indica que es una instancia de Boom.
+
+- isServer - si es true indica que el código de respuesta es mayor o igual 500, aquí más informacion de los codigos de respuesta HTTP status Code.
+
+- message - el mensaje del error.
+- typeof - el constructor usado para crear el error (ejemplo: Boom.badRequest).
+- output - la respuesta formateada (generalmente esta es la que usamos) y contiene las siguientes claves:
+
+- statusCode - código de estatus HTTP.
+- headers - un objeto que contiene encabezados HTTP donde cada clave es un nombre de encabezado y el valor es el contenido del encabezado.
+
+payload - el objeto formateado usado como respuesta y contiene las siguientes claves:
+- statusCode - código de estatus HTTP, proviene de statusCode
+- error - nombre derivado del error HTTP statusCode.
+- message - mensaje de error derivado de error.message
+
+///////////////////////// Implementando Boom /////////////////////////
+
+///////////////////////// Implementando joi /////////////////////////
+
+Descagamos joi: npm i @hapi/joi,
+Lo ponemos los squemas : "schemas/movies.js"
+Y la validacion : "middleware/validationHandlers.js"
+
+///////////////////////// Implementando joi /////////////////////////
+
+///////////////////////// Cross-origin resource sharing (colucion) /////////////////////////
+
+Para solucianolo descargamos: "npm install cors" ,Link: (https://expressjs.com/en/resources/middleware/cors.html)
+
+Lo usamos en index.
+
+Habilitar CORS para los request específicos de un cliente (Recomendado para producción)
+- const express = require("express");
+- const cors = require("cors");
+- const app = express();
+
+- const corsOptions = { origin: "http://example.com" };
+
+- app.use(cors(corsOptions));
+
+- app.get("/products/:id", function(req, res, next) {
+-   res.json({ msg: "This is CORS-enabled for only example.com." });
+- });
+
+- app.listen(8000, function() {
+-   console.log("CORS-enabled web server listening on port 8000");
+- });
+
+///////////////////////// Cross-origin resource sharing (colucion) /////////////////////////
+
+///////////////////////// helmet (mas seguridad) /////////////////////////
+
+Link : (https://github.com/helmetjs/helmet)
+Intalamos : npm install helmet --save
+
+Y lo ponemos en el index.js
+
+///////////////////////// helmet (mas seguridad) /////////////////////////
+
+///////////////////////// Creación de tests para nuestros endpoints(Rutas) /////////////////////////
+
+Los tests son solo en modo desarrollo: 
+- npm i -D mocha supertest sinon proxyquire
+  (mocha: nos ayuda a correr los tests)
+  (supertest: nos permite levantar un servidor temporal)
+  (sinon: nos ayuda a crear moscks)
+  (proxyquire: nos ayuda a implenetar los moscks cuando requiramos los paquetes)
+
+Va mos a unsar :"moscks/movies.js" para los tests
+
+Testeamos nuestras rutas con mocha, en la carpeta test. lo que tra y lsale de ella
+
+///////////////////////// Creación de tests para nuestros endpoints(Rutas) /////////////////////////
+
+///////////////////////// Creación de tests para nuestros servicios /////////////////////////
+
+Vamos a testear los servicios, asi que descartamos las librerias.
+
+Creamos un nuevo grupo de valores a testear.
+  Ver: "test/services.movies.test.js"
+
+Creamos un mocks de mongoDB la libreria.
+  ver: "utils/mocks/mongoLib.js"
+
+///////////////////////// Creación de tests para nuestros servicios /////////////////////////
+
+///////////////////////// Creación de tests para nuestras utilidades /////////////////////////
+
+TDD es test driven development.
+
+En otras palabras: crear primero las pruebas que hay que superar y después desarrollar el código.
+
+El profesor considera magnífico usar esto cuando se tiene muy claro la lógica de negocio.
+Si no lo tienes claro no es recomendable.
+También es recomendable hacerlo cuando tienes un bug para que tu solución de él perdure en el tiempo.
+
+///////////////////////// Creación de tests para nuestras utilidades /////////////////////////
+
+///////////////////////// Agregando un comando para coverage /////////////////////////
+
+nyc nos permite ver el status de nuestros test
+
+descargamos :
+- npm i -D nyc
+
+nyc es parte de instalBuol
+
+///////////////////////// Agregando un comando para coverage /////////////////////////
+
+///////////////////////// Debugging e inspect /////////////////////////
+Para aprovechar por completo la funcionalidad de debugging que implementa Express, lo que 
+recomiendo es cambiar todos los console.log por debug haciendo uso de un namespace de la 
+siguiente forma:
+
+- const debug = require("debug")("app:server");
+- debug("Hello debug");
+
+De esta manera si ejecutamos nuestra aplicación con el comando DEBUG=app:* node index.js 
+nos mostrará los diferentes logs.
+
+Los namespaces que recomiendo son los siguientes:
+
+-*  app:server para todo lo relacionado con el inicio del servidor como el mensaje Listening on http://localshost
+-*  app:db para todo lo relacionado con logs de las bases de datos, inicialización y ejecución de scripts.
+-*  app:error para todo lo relacionado con errores en nuestra aplicación.
+
+Nótese que esta convención es opcional, es decir, tu puedes seleccionar cualquier namespace. 
+Lo más importante es que sea el mismo que se pasará en la opción DEBUG.
+
+Express.js por defecto ya trae unos logs de debugging por defecto los podemos activar mediante
+la variable de entorno DEBUG=express:*.
+
+Por lo que recomiendo los scripts en nuestro archivo package.json de la siguiente manera:
+
+-  "scripts": {
+-    "dev": "DEBUG=express:*,app:* nodemon index",
+-    "debug": "DEBUG=express:*,app:* npm run start",
+-  },
+
+Ejecutando el modo inspect en desarrollo
+El modulo inspect de Node.js nos permite ejecutar un ambiente para hacer debugging de código 
+haciendo uso de la consola de desarrolladores de Google. Para ejecutarlo en modo desarrollo 
+con nodemon basta con agregar el flag --inspect por lo que recomiendo el siguiente script 
+en nuestro archivo package.json
+
+- "scripts": {
+-    "inspect": "DEBUG=express:*,app:* nodemon --inspect index"
+-  },
+
+///////////////////////// Debugging e inspect /////////////////////////

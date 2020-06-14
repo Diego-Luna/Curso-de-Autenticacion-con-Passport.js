@@ -299,7 +299,16 @@ disponible solo en esa pestaña.
 tiempo de expiración, la desventaja de usarlo es que al hacer request de imágenes 
 o datos las cookies van junto con la petición.
 
--> Si la información no es sensible podemos almacenarla en Local Storage o en Session 
-Storage.
+-> Si la información no es sensible podemos almacenarla en Local Storage o en 
+Session Storage.
 
 ///////////////////// Cookies vs Session Storage vs Local Storage /////////////////////
+
+///////////////////// Arquitectura del proyecto Platzi Video /////////////////////
+Nuestro proyecto va a depender de un API Server, el cual fue construido en el 
+Curso de Backend con Node.js. Este tiene un CRUD de películas, añadido a esto 
+nosotros vamos a crear un endpoint para registrar e iniciar la sesión de nuestros 
+usuarios.
+
+
+///////////////////// Arquitectura del proyecto Platzi Video /////////////////////
