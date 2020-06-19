@@ -312,3 +312,35 @@ usuarios.
 
 
 ///////////////////// Arquitectura del proyecto Platzi Video /////////////////////
+
+///////////////////// Cómo conectarnos a la base de datos /////////////////////
+
+-> Como conectarnos a la base de datos
+MongoDB Compass es un cliente con interfaz grafica que nos permiten conectarnos a 
+nuestras instancias de Mongo DB y manipularlas de una manera más facil. Con este 
+cliente nos podemos conectar a una instancia de cualquier servidor incluso una 
+instancia de MongoDB Atlas.
+
+Para descargarlo se puede usar el siguiente enlace: https://www.mongodb.com/download-center/compass
+
+-> Conexión usando MongoDB Compass
+
+Si nosotros copiamos el Mongo URI desde Mongo Atlas podemos conectarnos 
+facilmente con MongoDB Compass:
+
+1 ->Iniciamos sesion en MongoDB Atlas https://www.mongodb.com/cloud/atlas
+2 ->Nos vamos a la sección de Clusters en el menu lateral izquierdo.
+3 ->Seleccionamos connect en nuestro cluster sandbox.
+4 ->Seleccionamos la opción Connect with MongoDB Compass.
+5 ->Si no tenemos MongoDB Compass instalado, podemos descargarlo desde alli. Si 
+      ya lo tienes instalado continua con el paso 5.
+6 ->Le damos click en el boton copy para copiar el Mongo URI.
+7 ->Abrimos MongoDB Compass e inmediatamente va a reconocer nuestra URI que 
+      tenemos en el portapapeles.
+8 ->Hacemos click en yes para que nos cree una nueva conexión, pero es necesario 
+      introduccir el password del usuario de la base de datos.
+9 ->Podemos ponerle un nombre favorito y darle en Create favorite y luego en 
+      Connect.
+
+
+///////////////////// Cómo conectarnos a la base de datos /////////////////////
