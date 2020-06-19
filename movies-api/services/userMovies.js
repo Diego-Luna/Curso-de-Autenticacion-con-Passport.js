@@ -1,6 +1,5 @@
-const { required } = require("@hapi/joi");
 
-const MongoLib = required('../lib/mongo');
+const MongoLib = require('../lib/mongo');
 
 class UserMoviesService {
   constructor() {
