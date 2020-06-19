@@ -1,6 +1,6 @@
 const express = require('express');
 
-const UserMoviesServices = require('../services/userMovies');
+const UserMoviesService = require('../services/userMovies');
 const validationHandler = require('../utils/middleware/validationHandlers');
 
 const { movieIdSchema } = require('../utils/schemas/movies');
@@ -11,21 +11,63 @@ function userMoviesApi(app) {
   const router = express.Router();
   app.user('/api/user/movies', router);
 
-  const userMoviesServices = new UserMoviesServices();
+  const userMoviesService = new UserMoviesService();
 
   router.get('/', validationHandler({ userId: userIdSchema }, 'query'),
     async function (req, res, next) {
       const { userId } = req.query;
       try {
-        const userMovies = await userMoviesServices.getUserMovies({ userId });
+        const userMovies = await userMoviesService.getUserMovies({ userId });
 
         res.status(200).json({
           data: userMovies,
           message: 'user movies listed'
-        })
+        });
       } catch (err) {
         next(err);
       }
+    }
+  );
+
+  router.post('/', validationHandler(createUserMovieschema),
+    async function (req, res, next) {
+      const { body: userMovie } = req;
+
+      try {
+        const createdUserMovieId = await userMoviesService.createUserMovie({
+          userMovie
+        });
+
+        res.status(201).json({
+          data: createdUserMovieId,
+          message: 'user movie created'
+        });
+
+      } catch (err) {
+        next(err);
+      }
+    }
+  );
+
+  router.delete('/:userMovieId',
+    validationHandler({ userMovieId: movieIdSchema }, 'params'),
+    async function (req, res, next) {
+      const { userMovieId } = req.params;
+
+      try {
+        const deletedUserMovieId = await userMoviesService.deleteUserMovie({ userMovieId })
+
+        res.status(200).json({
+          data: deletedUserMovieId,
+          message: 'user movie deleted'
+        });
+
+      } catch (error) {
+        next(error)
+      }
+
     });
+
 }
 
+module.exports = userMoviesApi;

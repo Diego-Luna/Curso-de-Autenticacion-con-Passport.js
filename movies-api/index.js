@@ -16,6 +16,7 @@ app.use(helmet());
 const { config } = require('./config/index');
 
 const moviesApi = require('./routes/movies');
+const userMoviesApi = require('./routes/userMovies');
 
 // --- middleware ---
 const { //de los errores
@@ -23,7 +24,7 @@ const { //de los errores
   wrapErrors,
   errorHandler,
 } = require('./utils/middleware/errorHandlers');
-  // importamos el error 404
+// importamos el error 404
 const notFoundHandler = require('./utils/middleware/notFoundHandler');
 
 // --- middleware ---
@@ -39,15 +40,16 @@ app.use(cors());
 
 
 // --- Rutas ---
-  // como es una funciona ponemos la app de expres.
+// como es una funciona ponemos la app de expres.
 moviesApi(app);
-  // el error 404 y capturarlo, va despues de las rutas 
+userMoviesApi(app);
+// el error 404 y capturarlo, va despues de las rutas 
 app.use(notFoundHandler);
 // --- Rutas ---
 
 
 // --- middleware --- Error deven ir despues de las rutas
-  // manejadores de errores
+// manejadores de errores
 app.use(logErrors);
 app.use(wrapErrors);
 app.use(errorHandler);
