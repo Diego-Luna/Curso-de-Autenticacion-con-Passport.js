@@ -3,11 +3,13 @@ const passport = require('passport');
 const boom = require('@hapi/boom');
 const jwt = require('jsonwebtoken');
 const ApiKeysService = require('../services/apiKeys');
+// para crear usuarios, y los validamos
+const UsersService = require('../services/users');
+const validationHandler = require('../utils/middleware/validationHandler');
 
-// const { config } = require('../config/index');
+const { createUserSchema } = require('../utils/schemas/users');
+
 const { config } = require('../config');
-
-// const { function } = require('@hapi/joi');
 
 // strategia Basic
 require('../utils/auth/strategies/basic');
@@ -17,6 +19,7 @@ function authApi(app) {
   app.use('/api/auth', router);
 
   const apiKeysService = new ApiKeysService();
+  const usersService = new UsersService();
 
   router.post('/sign-in', async function (req, res, next) {
     // del cuerpo bengan el apiKeyToken, para dar los permisos
@@ -73,6 +76,26 @@ function authApi(app) {
       }
     })(req, res, next);
   });
+
+  // nueva ruta
+  router.post('/sign-up', validationHandler(createUserSchema),
+    async function (req, res, next) {
+      const { body: user } = req;
+
+      try {
+        // llamar nuestro servicio de creacion de usuario
+        const createdUserId = await usersService.createUser({ user });
+
+        // si todo fue vien
+        res.status(201).json({
+          data: createdUserId,
+          message: 'user created'
+        });
+
+      } catch (error) {
+        next(error);
+      }
+    })
 }
 
 module.exports = authApi;
