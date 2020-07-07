@@ -11,7 +11,7 @@ const {
 } = require('../utils/schemas/movies');
 // traemos nuestro codigo de validacion
 // const validationHandlers = require('../utils/middleware/validationHandlers');
-const validationHandler = require('../utils/middleware/validationHandlers');
+const validationHandler = require('../utils/middleware/validationHandler');
 
 const cacheResponse = require('../utils/cacheResponse');
 const {

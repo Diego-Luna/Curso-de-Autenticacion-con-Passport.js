@@ -1,7 +1,7 @@
 const express = require('express');
 
 const UserMoviesService = require('../services/userMovies');
-const validationHandler = require('../utils/middleware/validationHandlers');
+const validationHandler = require('../utils/middleware/validationHandler');
 
 const { movieIdSchema } = require('../utils/schemas/movies');
 const { userIdSchema } = require('../utils/schemas/users');
@@ -9,11 +9,12 @@ const { createUserMovieschema } = require('../utils/schemas/userMovies');
 
 function userMoviesApi(app) {
   const router = express.Router();
-  app.user('/api/user/movies', router);
+  app.use('/api/auth', router);
+
 
   const userMoviesService = new UserMoviesService();
 
-  router.get('/', validationHandler({ userId: userIdSchema }, 'query'),
+  router.get('/sign-in', validationHandler({ userId: userIdSchema }, 'query'),
     async function (req, res, next) {
       const { userId } = req.query;
       try {
@@ -23,8 +24,8 @@ function userMoviesApi(app) {
           data: userMovies,
           message: 'user movies listed'
         });
-      } catch (err) {
-        next(err);
+      } catch (error) {
+        next(error);
       }
     }
   );
@@ -43,8 +44,8 @@ function userMoviesApi(app) {
           message: 'user movie created'
         });
 
-      } catch (err) {
-        next(err);
+      } catch (error) {
+        next(error);
       }
     }
   );
@@ -55,7 +56,7 @@ function userMoviesApi(app) {
       const { userMovieId } = req.params;
 
       try {
-        const deletedUserMovieId = await userMoviesService.deleteUserMovie({ userMovieId })
+        const deletedUserMovieId = await userMoviesService.deleteUserMovie({ userMovieId });
 
         res.status(200).json({
           data: deletedUserMovieId,
@@ -63,11 +64,9 @@ function userMoviesApi(app) {
         });
 
       } catch (error) {
-        next(error)
+        next(error);
       }
-
     });
-
 }
 
 module.exports = userMoviesApi;

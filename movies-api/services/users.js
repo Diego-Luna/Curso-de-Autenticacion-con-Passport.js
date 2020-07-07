@@ -1,13 +1,15 @@
-const { required } = require("@hapi/joi");
 
-const MongoLib = required('../lib/mongo');
+const MongoLib = require('../lib/mongo');
+
 // es para imcriptar las contraseñas
 const bcrypt = require('bcrypt');
 
 class UsersService {
   constructor() {
     this.collection = 'users';
-    this.mongoDB = MongoLib();
+    // this.mongoDB = MongoLib();
+    this.mongoDB = new MongoLib();
+
   }
 
   async getUser({ email }) {

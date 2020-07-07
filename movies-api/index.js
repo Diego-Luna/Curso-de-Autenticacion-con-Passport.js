@@ -15,6 +15,7 @@ app.use(helmet());
 
 const { config } = require('./config/index');
 
+const authApi = require('./routes/auth');
 const moviesApi = require('./routes/movies');
 const userMoviesApi = require('./routes/userMovies');
 
@@ -41,6 +42,7 @@ app.use(cors());
 
 // --- Rutas ---
 // como es una funciona ponemos la app de expres.
+authApi(app);
 moviesApi(app);
 userMoviesApi(app);
 // el error 404 y capturarlo, va despues de las rutas 
