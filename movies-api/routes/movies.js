@@ -19,6 +19,10 @@ const {
   SIXTY_MINUTES_IN_SECONDS,
 } = require('../utils/time');
 
+// JWT strategy
+require('../utils/auth/strategies/jwt');
+const passport = require('passport');
+
 function moviesApi(app) {
   //iniciamos rutas
   const router = express.Router();
@@ -30,7 +34,7 @@ function moviesApi(app) {
   const moviesService = new MoviesService();
 
   // iniciamos con el home,=(/api/movies)  //ver todo
-  router.get('/', async function (req, res, next) {
+  router.get('/', passport.authenticate('jwt', { session: false }), async function (req, res, next) {
     cacheResponse(res, FIVE_MINUTES_IN_SECONDS);
     // viene de la api
     const { tags } = req.query;
@@ -53,6 +57,7 @@ function moviesApi(app) {
   // iniciamos con el home,=(/api/movies)  //ver por id
   router.get(
     '/:movieId',
+    passport.authenticate('jwt', { session: false }),
     validationHandler({ movieId: movieIdSchema }, 'params'),
     async function (req, res, next) {
       cacheResponse(res, SIXTY_MINUTES_IN_SECONDS);
@@ -74,11 +79,12 @@ function moviesApi(app) {
   );
 
   // iniciamos con el home,=(/api/movies)  //crear pelicula
-  router.post('/', validationHandler(createMovieSchema), async function (
-    req,
-    res,
-    next
-  ) {
+  router.post('/', passport.authenticate('jwt', { session: false }),
+    validationHandler(createMovieSchema), async function (
+      req,
+      res,
+      next
+    ) {
     // viene desdel cuerpo, le ponemos un alisas
     const { body: movie } = req;
     try {
@@ -97,6 +103,7 @@ function moviesApi(app) {
   // iniciamos con el home,=(/api/movies)  //para actualisar
   router.put(
     '/:movieId',
+    passport.authenticate('jwt', { session: false }),
     validationHandler({ movieId: movieIdSchema }, 'params'),
     validationHandler(updateMovieSchema),
     async function (req, res, next) {
@@ -122,6 +129,7 @@ function moviesApi(app) {
   // iniciamos con el home,=(/api/movies)  //para borrar
   router.delete(
     '/:movieId',
+    passport.authenticate('jwt', { session: false }),
     validationHandler({ movieId: movieIdSchema }, 'params'),
     async function (req, res, next) {
       const { movieId } = req.params;
