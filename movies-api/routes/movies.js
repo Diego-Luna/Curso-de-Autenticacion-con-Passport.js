@@ -12,6 +12,7 @@ const {
 // traemos nuestro codigo de validacion
 // const validationHandlers = require('../utils/middleware/validationHandlers');
 const validationHandler = require('../utils/middleware/validationHandler');
+const scopesValidationHandler = require('../utils/middleware/scopesValidationHandler');
 
 const cacheResponse = require('../utils/cacheResponse');
 const {
@@ -34,30 +35,34 @@ function moviesApi(app) {
   const moviesService = new MoviesService();
 
   // iniciamos con el home,=(/api/movies)  //ver todo
-  router.get('/', passport.authenticate('jwt', { session: false }), async function (req, res, next) {
-    cacheResponse(res, FIVE_MINUTES_IN_SECONDS);
-    // viene de la api
-    const { tags } = req.query;
-    try {
-      const movies = await moviesService.getMovies({ tags });
+  router.get('/', 
+    passport.authenticate('jwt', { session: false }),
+    scopesValidationHandler(['read:movies']),
+    async function (req, res, next) {
+      cacheResponse(res, FIVE_MINUTES_IN_SECONDS);
+      // viene de la api
+      const { tags } = req.query;
+      try {
+        const movies = await moviesService.getMovies({ tags });
 
       // error al proposito
       // throw new Error('Error getting movies :D');
 
       // mandamos el estatus 200, que esta ok, y lo mandamos con .json
-      res.status(200).json({
-        data: movies, // los datos son lo que declaramos antes
-        message: 'movies listed', // Y los mensages para el cliente
-      });
-    } catch (err) {
-      next(err);
-    }
+        res.status(200).json({
+          data: movies, // los datos son lo que declaramos antes
+          message: 'movies listed', // Y los mensages para el cliente
+        });
+      } catch (err) {
+        next(err);
+      }
   });
 
   // iniciamos con el home,=(/api/movies)  //ver por id
   router.get(
     '/:movieId',
     passport.authenticate('jwt', { session: false }),
+    scopesValidationHandler(['read:movies']),
     validationHandler({ movieId: movieIdSchema }, 'params'),
     async function (req, res, next) {
       cacheResponse(res, SIXTY_MINUTES_IN_SECONDS);
@@ -80,6 +85,7 @@ function moviesApi(app) {
 
   // iniciamos con el home,=(/api/movies)  //crear pelicula
   router.post('/', passport.authenticate('jwt', { session: false }),
+    scopesValidationHandler(['create:movies']),
     validationHandler(createMovieSchema), async function (
       req,
       res,
@@ -104,6 +110,7 @@ function moviesApi(app) {
   router.put(
     '/:movieId',
     passport.authenticate('jwt', { session: false }),
+    scopesValidationHandler(['update:movies']),
     validationHandler({ movieId: movieIdSchema }, 'params'),
     validationHandler(updateMovieSchema),
     async function (req, res, next) {
@@ -130,6 +137,7 @@ function moviesApi(app) {
   router.delete(
     '/:movieId',
     passport.authenticate('jwt', { session: false }),
+    scopesValidationHandler(['deleted:movies']),
     validationHandler({ movieId: movieIdSchema }, 'params'),
     async function (req, res, next) {
       const { movieId } = req.params;
