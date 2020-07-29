@@ -6,6 +6,10 @@ const axios = require("axios");
 
 const { config } = require("./config");
 
+// Agregamos las variables de timpo en segundos
+const THIRTY_DAYS_IN_SEC = 2592000;
+const TWO_HOURS_IN_SEC = 7200;
+
 const app = express();
 
 // body parser
@@ -16,6 +20,8 @@ app.use(cookieParser());
 require("./utils/auth/strategies/basic");
 
 app.post("/auth/sign-in", async function (req, res, next) {
+  // Obtenemos el atributo rememberMe desde el cuerpo del request
+  const { rememberMe } = req.body;
   passport.authenticate("basic", function (error, data) {
     try {
       // si hay un error o no hay datos
@@ -35,13 +41,23 @@ app.post("/auth/sign-in", async function (req, res, next) {
         // destructuramos nuestros datos
         const { token, ...user } = data;
 
-        // definimos una cookie,
-        res.cookie("token", token, {
-          httpOnly: !config.dev,
-          secure: !config.dev
-        });
+        // definimos una cookie, de manera basica
+        // res.cookie("token", token, {
+        //   httpOnly: !config.dev,
+        //   secure: !config.dev
+        // });
+
         // en produccion lo devemos acseder por http, por un servidor
         // y sea manajada por HTTPS
+
+        // Si el atributo rememberMe es verdadero la expiración será en 30 dias
+        // de lo contrario la expiración será en 2 horas
+        res.cookie("token", token, {
+          httpOnly: !config.dev,
+          secure: !config.dev,
+          maxAge: rememberMe ? THIRTY_DAYS_IN_SEC : TWO_HOURS_IN_SEC
+        });
+
 
         // regresamos un ok, y el usuarios
         res.status(200).json(user);
