@@ -403,3 +403,23 @@ OpenID Connect es una capa de autenticación que funciona sobre OAuth con métod
 ya construidos.
 
 ///////////////////// ¿Qué es OAuth 2.0 y OpenID Connect? /////////////////////
+
+///////////////////// Cómo crear un proyecto en Google API para hacer autenticación con 0Auth 2.0 /////////////////////
+
+Con el fin de poder usar Google como método de autenticación es necesario crear un 
+nuevo proyecto dentro de la consola de desarrolladores de Google.
+
+-> Nos dirigimos a https://console.developers.google.com y nos autenticamos con
+  nuestra cuenta de Google.
+-> En la parte superior izquierda seleccionamos la organización que queremos usar
+  (Debe haber una por defecto) y hacemos click en Create Project.
+-> Luego nos vamos al sidebar izquierdo y seleccionamos Credentials > Create 
+  credentials > OAuth client ID
+-> Nos aseguramos de elegir Web Application como el tipo de aplicación.
+-> Luego establecemos el nombre del cliente que en nuestro caso será SSR Server,
+  el Authorized JavaScript origins: http://localhost:8000 y el Authorized redirect URIs http://localhost:8000/auth/google-oauth/callback. Cuando hagamos despliegue de nuestra aplicación lo ideal es crear otro cliente y remplazar las URLs por las URLs correspondientes de producción.
+-> El Application Name del Consent Screen será Platzi Videos.
+-> Al finalizar la creación copiamos el Client ID y Client secret que seran 
+  usados como GOOGLE_CLIENT_ID y GOOGLE_CLIENT_SECRET respectivamente.
+
+///////////////////// Cómo crear un proyecto en Google API para hacer autenticación con 0Auth 2.0 /////////////////////
