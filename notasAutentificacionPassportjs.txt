@@ -393,5 +393,13 @@ app.post("/auth/sign-in", async function(req, res, next) {
 
 <--- codigo --->
 
-
 ///////////////////// Implementando recordar sesión /////////////////////
+
+///////////////////// ¿Qué es OAuth 2.0 y OpenID Connect? /////////////////////
+
+OAuth 2.0 es un estándar de la industria que nos permite implementar autorización.
+
+OpenID Connect es una capa de autenticación que funciona sobre OAuth con métodos 
+ya construidos.
+
+///////////////////// ¿Qué es OAuth 2.0 y OpenID Connect? /////////////////////
