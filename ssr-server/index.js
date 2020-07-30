@@ -13,12 +13,15 @@ app.use(express.json());
 app.use(cookieParser());
 
 // el tiempo de vida de la atorisacion
-// Agregamos las variables de timpo en segundos
+// Agregamos las variables de timpo en milisegundos
 const THIRTY_DAYS_IN_SEC = 2592000000;
 const TWO_HOURS_IN_SEC = 7200000;
 
 //  Basic strategy
 require("./utils/auth/strategies/basic");
+
+// OAuth strategy
+require('./utils/auth/strategies/oauth');
 
 app.post("/auth/sign-in", async function (req, res, next) {
 
@@ -120,6 +123,33 @@ app.delete("/user-movies/:userMovieId", async function (req, res, next) {
     next(error);
   }
 });
+
+app.get(
+  "/auth/google-oauth",
+  passport.authenticate("google-oauth", {
+    scope: ["email", "profile", "openid"]
+  })
+);
+
+app.get(
+  "/auth/google-oauth/callback",
+  passport.authenticate("google-oauth", { session: false }),
+  function (req, res, next) {
+    if (!req.user) {
+      next(boom.unauthorized());
+    }
+
+    const { token, ...user } = req.user;
+
+    res.cookie("token", token, {
+      httpOnly: !config.dev,
+      secure: !config.dev
+    });
+
+    res.status(200).json(user);
+  }
+);
+
 
 app.listen(config.port, function () {
   console.log(`Listening http://localhost:${config.port}`);
