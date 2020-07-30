@@ -14,7 +14,7 @@ const passport = require('passport');
 
 function userMoviesApi(app) {
   const router = express.Router();
-  app.use('/api/auth', router);
+  app.use('/api/user-movies', router);
 
 
   const userMoviesService = new UserMoviesService();
