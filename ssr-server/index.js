@@ -1,14 +1,14 @@
-const express = require("express");
+const express = require('express');
 const passport = require('passport');
 const boom = require('@hapi/boom');
-const cookieParser = require("cookie-parser");
-const axios = require("axios");
+const cookieParser = require('cookie-parser');
+const axios = require('axios');
 
-const { config } = require("./config");
+const { config } = require('./config');
 
 // Agregamos las variables de timpo en segundos
-const THIRTY_DAYS_IN_SEC = 2592000;
-const TWO_HOURS_IN_SEC = 7200;
+const THIRTY_DAYS_IN_SEC = 2592000000;
+const TWO_HOURS_IN_SEC = 7200000;
 
 const app = express();
 
@@ -17,49 +17,32 @@ app.use(express.json());
 app.use(cookieParser());
 
 //  Basic strategy
-require("./utils/auth/strategies/basic");
+require('./utils/auth/strategies/basic');
 
-app.post("/auth/sign-in", async function (req, res, next) {
+app.post('/auth/sign-in', async function (req, res, next) {
   // Obtenemos el atributo rememberMe desde el cuerpo del request
-  const { rememberMe } = req.body;
+  //const { rememberMe } = req.body;
+
   passport.authenticate("basic", function (error, data) {
     try {
-      // si hay un error o no hay datos
       if (error || !data) {
-        // regresamos un error
         next(boom.unauthorized());
+        console.log('boom unauthorized, linea 30');
       }
 
-      // si toda sali bien
-      // la session va a hacer falso, por que no manejamos estado
       req.login(data, { session: false }, async function (error) {
-        // si hay un error, llamamos a next
         if (error) {
           next(error);
         }
 
-        // destructuramos nuestros datos
         const { token, ...user } = data;
 
-        // definimos una cookie, de manera basica
-        // res.cookie("token", token, {
-        //   httpOnly: !config.dev,
-        //   secure: !config.dev
-        // });
-
-        // en produccion lo devemos acseder por http, por un servidor
-        // y sea manajada por HTTPS
-
-        // Si el atributo rememberMe es verdadero la expiración será en 30 dias
-        // de lo contrario la expiración será en 2 horas
         res.cookie("token", token, {
           httpOnly: !config.dev,
-          secure: !config.dev,
-          maxAge: rememberMe ? THIRTY_DAYS_IN_SEC : TWO_HOURS_IN_SEC
+          secure: !config.dev
         });
+        //    masAge: rememberMe ? THIRTY_DAYS_IN_SEC : TWO_HOURS_IN_SEC,
 
-
-        // regresamos un ok, y el usuarios
         res.status(200).json(user);
       });
     } catch (error) {
@@ -92,11 +75,54 @@ app.get("/movies", async function (req, res, next) {
 });
 
 app.post("/user-movies", async function (req, res, next) {
+  try {
+    const { body: userMovie } = req;
+    const { token } = req.cookies;
 
+    const { data, status } = await axios({
+      url: `${config.apiUrl}/api/user-movies`,
+      headers: { Authorization: `Bearer ${token}` },
+      method: 'post',
+      data: userMovie
+    });
+
+    // vemos si el status es diferente a 201
+    if (status !== 201) {
+      // si es difeente regresamos un error, general
+      return next(boom.badImplementation());
+    }
+
+    // es el codigo http de que fue creado
+    res.status(201).json(data);
+
+  } catch (error) {
+    next(error);
+  }
 });
 
 app.delete("/user-movies/:userMovieId", async function (req, res, next) {
+  try {
+    const { userMovieId } = req.params;
+    const { token } = req.cookies;
 
+    const { data, status } = await axios({
+      url: `${config.apiUrl}/api/user-movies/${userMovieId}`,
+      headers: { Authorization: `Bearer ${token}` },
+      method: 'delete',
+    });
+
+    // vemos si el status es diferente a 200
+    if (status !== 200) {
+      // si es difeente regresamos un error, general
+      return next(boom.badImplementation());
+    }
+
+    // es el codigo http de que esta ok
+    res.status(200).json(data);
+
+  } catch (error) {
+    next(error);
+  }
 });
 
 app.listen(config.port, function () {
