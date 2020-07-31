@@ -423,3 +423,85 @@ nuevo proyecto dentro de la consola de desarrolladores de Google.
   usados como GOOGLE_CLIENT_ID y GOOGLE_CLIENT_SECRET respectivamente.
 
 ///////////////////// Cómo crear un proyecto en Google API para hacer autenticación con 0Auth 2.0 /////////////////////
+
+///////////////////// Autenticación con Google usando OpenID Connect /////////////////////
+
+En el curso vimos como se podia implementar Google Authentication usando la 
+estrategia de OAuth directamente. En esta lectura vamos a explorar como hacer la 
+autenticación usando la estrategia directa de Google.
+
+Lo primero es instalar nuestras dependencias
+
+- npm install passport-google-oauth
+
+Luego creamos una nueva estrategia llamada "google" dentro de 
+"utils/auth/strategies/google.js":
+<--- codigo --->
+const passport = require("passport");
+const { OAuth2Strategy: GoogleStrategy } = require("passport-google-oauth");
+
+const { config } = require("../../../config/index");
+
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: config.googleClientId,
+      clientSecret: config.googleClientSecret,
+      callbackURL: "/auth/google/callback"
+    },
+    function(accessToken, refreshToken, profile, cb) {
+      const { data, status } = await axios({
+        url: `${config.apiUrl}/api/auth/sign-provider`,
+        method: "post",
+        data: {
+            name: profile.name,
+            email: profile.email,
+            password: profile.id,
+            apiKeyToken: config.apiKeyToken
+        }
+      });
+
+      if (!data || status !== 200) {
+        return cb(boom.unauthorized(), false);
+      }
+
+      return cb(null, data);
+    }
+  )
+)
+<--- codigo --->
+
+Teniendo nuestra estrategia de Google ya podemos agregar las dos nuevas rutas de 
+autenticación.
+<--- codigo --->
+app.get(
+  "/auth/google",
+  passport.authenticate("google", {
+    scope: ["email", "profile", "openid"]
+  })
+);
+
+app.get(
+  "/auth/google/callback",
+  passport.authenticate("google", { session: false }),
+  function(req, res, next) {
+    if (!req.user) {
+      next(boom.unauthorized());
+    }
+
+    const { token, ...user } = req.user;
+
+    res.cookie("token", token, {
+      httpOnly: !config.dev,
+      secure: !config.dev
+    });
+
+    res.status(200).json(user);
+  }
+);
+<--- codigo --->
+
+Con esto tenemos nuestra implementación de autenticación con Google pero mucho 
+más sencilla.
+
+///////////////////// Autenticación con Google usando OpenID Connect /////////////////////
