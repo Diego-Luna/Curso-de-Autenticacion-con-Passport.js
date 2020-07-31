@@ -505,3 +505,94 @@ Con esto tenemos nuestra implementación de autenticación con Google pero mucho
 más sencilla.
 
 ///////////////////// Autenticación con Google usando OpenID Connect /////////////////////
+
+///////////////////// Autenticación con Facebook /////////////////////
+
+A continuación veremos cómo podemos implementar la autenticación haciendo uso de 
+la estrategia para Facebook. Es importante primero tener una cuenta de Facebook 
+para desarrolladores: https://developers.facebook.com/ y crear una app/project 
+como lo hemos hecho anteriormente para Google y Twitter. Podemos seguir las 
+instrucciones aquí: https://developers.facebook.com/docs/apps, para obtener 
+nuestros FACEBOOK_CLIENT_ID y FACEBOOK_CLIENT_SECRET respectivamente.
+
+Lo primero es instalar nuestras dependencias:
+- npm install passport-facebook
+
+Luego creamos una nueva estrategia llamada facebook dentro de 
+"utils/auth/strategies/facebook.js":
+
+<--- codigo --->
+const passport = require('passport');
+const { Strategy: FacebookStrategy } = require('passport-facebook');
+const axios = require('axios');
+const boom = require('@hapi/boom');
+
+
+const { config } = require("../../../config/index");
+
+passport.use(
+    new FacebookStrategy({
+        clientID: config.facebookClientId,
+        clientSecret: config.facebookClientSecret,
+        callbackURL: "/auth/facebook/callback",
+        profileFields: ['id', 'displayName', 'photos', 'email']
+    },
+        asyncfunction (accessToken, refreshToken, { _json: profile }, done) {
+            try {
+		
+                // te permite ver el objeto profile, y su composición.
+                console.log(profile)
+                    
+                const { data, status } = await axios({
+                    url: `${config.apiUrl}/api/auth/sign-provider`,
+                    method: "post",
+                    data: {
+                        name: profile.name,
+                        email: profile.email,
+                        password: profile.id,
+                        apiKeyToken: config.apiKeyToken
+                    }
+                });
+
+                if (!data || status !== 200) {
+                    return cb(boom.unauthorized(), false);
+                }
+
+                return done(null, data);
+            } catch (error) {
+                done(error)
+            }
+        }
+    ));
+<--- codigo --->
+
+Teniendo nuestra estrategia de Facebook ya podemos agregar las dos nuevas rutas 
+de autenticación.
+
+<--- codigo --->
+app.get( '/auth/facebook', passport.authenticate('facebook', {
+    scope: ['email'],
+  })
+);
+
+app.get(
+  "/auth/facebook/callback",
+  passport.authenticate("facebook", { session: false }),
+  function(req, res, next) {
+    if (!req.user) {
+      next(boom.unauthorized());
+    }
+
+    const { token, ...user } = req.user;
+
+    res.cookie("token", token, {
+      httpOnly: !config.dev,
+      secure: !config.dev
+    });
+
+    res.status(200).json(user);
+  }
+);
+<--- codigo --->
+
+///////////////////// Autenticación con Facebook /////////////////////
