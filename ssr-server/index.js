@@ -134,7 +134,7 @@ app.get(
 app.get(
   "/auth/google-oauth/callback",
   passport.authenticate("google-oauth", { session: false }),
-  function (req, res, next) {
+  function(req, res, next) {
     if (!req.user) {
       next(boom.unauthorized());
     }

@@ -7,7 +7,7 @@ const ApiKeysService = require('../services/apiKeys');
 const UsersService = require('../services/users');
 const validationHandler = require('../utils/middleware/validationHandler');
 
-const { createUserSchema } = require('../utils/schemas/users');
+const { createUserSchema, createProviderUserSchema } = require('../utils/schemas/users');
 
 const { config } = require('../config');
 
@@ -95,7 +95,50 @@ function authApi(app) {
       } catch (error) {
         next(error);
       }
-    })
+    });
+
+  // la ruta para los usuarios
+  router.post('/sign-provider',
+    validationHandler(createProviderUserSchema),
+
+    async function (req, res, next) {
+      // sacamos el body del Req
+      const { body } = req;
+
+      const { apiKeyToken, ...user } = body;
+      if (!apiKeyToken) {
+        next(boom.unauthorized('apiKeyToken is required'));
+      }
+
+      try {
+        const queriedUser = await usersService.getOrCreateUser({ user });
+        const apiKey = await apiKeysService.getApiKey({ token: apiKeyToken });
+
+        if (!apiKey) {
+          next(boom.unauthorized());
+        }
+
+        // si todo sale bien
+        const { _id: id, name, email } = queriedUser;
+
+        const payload = {
+          sub: id,
+          name,
+          email,
+          scopes: apiKey.scopes
+        };
+
+        // asemos el sing-in, que es para terceros como google
+        //  y exprira en 15 minutos
+        const token = jwt.sign(payload, config.authJwtSecret, {
+          expiresIn: '15m'
+        });
+
+        return res.status(200).json({ token, user: { id, name, email } });
+      } catch (error) {
+        next(error);
+      }
+    });
 }
 
 module.exports = authApi;

@@ -10,32 +10,33 @@ const GOOGLE_TOKEN_URL = 'https://www.googleapis.com/oauth2/v4/token';
 const GOOGLE_USERINFO_URL = 'https://www.googleapis.com/oauth2/v3/userinfo';
 
 // preparamos nuestra estategia de Google
-const oAuth2Strategy = new OAuth2Strategy({
-  authorizationURL: GOOGLE_AUTHORIZATION_URL,
-  tokenURL: GOOGLE_TOKEN_URL,
-  clientID: config.googleClientId,
-  clientSecret: config.googleClientSecret,
-  callbackURL: "/auth/google-oauth/callback"
-}, async function (accessToken, refreshToken, profile, cb) {
-  const { data, status } = await axios({
-    url: `${config.apiUrl}/api/auth/sign-provider`,
-    method: "post",
-    data: {
-      name: profile.name,
-      email: profile.email,
-      password: profile.id,
-      apiKeyToken: config.apiKeyToken
+const oAuth2Strategy = new OAuth2Strategy(
+  {
+    authorizationURL: GOOGLE_AUTHORIZATION_URL,
+    tokenURL: GOOGLE_TOKEN_URL,
+    clientID: config.googleClientId,
+    clientSecret: config.googleClientSecret,
+    callbackURL: "/auth/google-oauth/callback"
+  }, async function (accessToken, refreshToken, profile, cb) {
+    const { data, status } = await axios({
+      url: `${config.apiUrl}/api/auth/sign-provider`,
+      method: "post",
+      data: {
+        name: profile.name,
+        email: profile.email,
+        password: profile.id,
+        apiKeyToken: config.apiKeyToken
+      }
+    });
+
+    // para ver que todo fue bien axios, si no lanzamos un error
+    if (!data || status !== 200) {
+      return cb(boom.unauthorized(), false);
     }
-  });
 
-  // para ver que todo fue bien axios, si no lanzamos un error
-  if (!data || status !== 200) {
-    return cb(boom.unauthorized(), false);
+    // si todo fue muy bien
+    return cb(null, data);
   }
-
-  // si todo fue muy bien
-  return cb(null, data);
-}
 );
 
 oAuth2Strategy.userProfile = function (accessToken, done) {
@@ -57,7 +58,6 @@ oAuth2Strategy.userProfile = function (accessToken, done) {
       };
 
       done(null, profile);
-
     } catch (parseError) {
       return done(parseError);
     }
