@@ -1,5 +1,6 @@
 const express = require("express");
 const passport = require("passport");
+const session = require("express-session");
 const boom = require("@hapi/boom");
 const cookieParser = require("cookie-parser");
 const axios = require("axios");
@@ -11,6 +12,11 @@ const app = express();
 // body parser
 app.use(express.json());
 app.use(cookieParser());
+// le pasamos secret, para que lo codigique
+app.use(session({ secret: config.sessionSecret }));
+// inicialisamos la session
+app.use(passport.initialize());
+app.use(passport.session());
 
 // el tiempo de vida de la atorisacion
 // Agregamos las variables de timpo en milisegundos
@@ -25,6 +31,10 @@ require('./utils/auth/strategies/oauth');
 
 // google strategy
 require('./utils/auth/strategies/google');
+
+// twitter strategy
+require('./utils/auth/strategies/twitter');
+
 
 app.post("/auth/sign-in", async function (req, res, next) {
 
@@ -138,7 +148,7 @@ app.get(
 app.get(
   "/auth/google-oauth/callback",
   passport.authenticate("google-oauth", { session: false }),
-  function(req, res, next) {
+  function (req, res, next) {
     if (!req.user) {
       next(boom.unauthorized());
     }
@@ -165,7 +175,7 @@ app.get(
 app.get(
   "/auth/google/callback",
   passport.authenticate("google", { session: false }),
-  function(req, res, next) {
+  function (req, res, next) {
     if (!req.user) {
       next(boom.unauthorized());
     }
@@ -181,6 +191,27 @@ app.get(
   }
 );
 
+// asemos la ruta, para autentificacion con twitter
+app.get("/auth/twitter", passport.authenticate("twitter"));
+
+app.get("/auth/twitter/callback",
+  passport.authenticate("twitter", { session: false }),
+  function (req, res, next) {
+    if (!req.user) {
+      next(boom.unauthorized());
+    }
+    // si toda sale bien
+    const { token, ...user } = req.user;
+
+    res.cookie("token", token, {
+      httpOnly: !config.dev,
+      secure: !config.dev
+    });
+
+    // regresamos el usuario en json,
+    res.status(200).json(user);
+
+  })
 
 app.listen(config.port, function () {
   console.log(`Listening http://localhost:${config.port}`);
