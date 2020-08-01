@@ -596,3 +596,10 @@ app.get(
 <--- codigo --->
 
 ///////////////////// Autenticación con Facebook /////////////////////
+
+///////////////////// Para checar las vulneravilidades /////////////////////
+
+Para checar los paketes de NPM, tienen alguna vulneravilidad:
+- npm audit
+
+///////////////////// Para checar las vulneravilidades /////////////////////

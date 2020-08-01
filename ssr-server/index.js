@@ -9,6 +9,11 @@ const { config } = require("./config");
 
 const app = express();
 
+// -- Helmet --
+const helmet = require('helmet');
+app.use(helmet());
+// -- Helmet --
+
 // body parser
 app.use(express.json());
 app.use(cookieParser());
