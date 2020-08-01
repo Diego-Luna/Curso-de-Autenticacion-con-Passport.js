@@ -635,3 +635,19 @@ Tener en cuenta que algunas vulnerabilidades no tienen solución en el momento p
 lo que toca estar pendiente de un posible fix o cambiar de librería.
 
 ///////////////////// Automatizar el chequeo de vulnerabilidades con Snyk /////////////////////
+
+///////////////////// Qué es OWASP y buenas prácticas de seguridad /////////////////////
+
+OWASP son las siglas de Open Web Application Security Project, una organización que cuida las buenas prácticas de seguridad en las aplicaciones.
+
+Buenas prácticas:
+
+Usa un gestor de contraseñas
+Usa multi-factor auth
+IRL security
+Mantén actualizadas tus aplicaciones y SO
+Mantente informado
+
+
+///////////////////// Qué es OWASP y buenas prácticas de seguridad /////////////////////
+
