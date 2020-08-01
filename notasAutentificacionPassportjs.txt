@@ -603,3 +603,35 @@ Para checar los paketes de NPM, tienen alguna vulneravilidad:
 - npm audit
 
 ///////////////////// Para checar las vulneravilidades /////////////////////
+
+///////////////////// Automatizar el chequeo de vulnerabilidades con Snyk /////////////////////
+
+Para usar snyk lo primero es crear una cuenta en https://app.snyk.io/signup para 
+agilizar el proceso recomiendo usar la cuenta de GitHub.
+
+Despues de la creación de la cuenta nos redireccionara a las integraciones o 
+podemos ir directamente mediante el link https://app.snyk.io/org/<usuario>/integrations.
+
+Seleccionamos la integración con GitHub (ó con el servicio más adecuado para 
+nuestro proyecto) y allí nos aseguramos de conectar nuestra cuenta con GitHub, 
+otorgando los permisos necesarios.
+
+Por ultimo necesitamos agregar el repositorio de nuestro proyecto para que haga la 
+revision automática de vulnerabilidades en cada Pull request, mediante el botón 
+Add your GitHub repositories to Snyk.
+
+Allí buscaremos el repositorio de nuestro proyecto, lo seleccionamos y le damos en 
+el botón Add 1 selected repository to Snyk.
+
+Cuando termine la integración podemos dirigirnos al dashboard de nuestros 
+proyectos haciendo click en la pestaña Projects o mediante el link: 
+https://app.snyk.io/org/<usuario></usuario>/projects y verificar el estado de 
+nuestras dependencias:
+
+En lo posible debemos evitar tener vulnerabilidades High (H) o Medium (M) para 
+corregirlas le damos click en View report and fix.
+
+Tener en cuenta que algunas vulnerabilidades no tienen solución en el momento por
+lo que toca estar pendiente de un posible fix o cambiar de librería.
+
+///////////////////// Automatizar el chequeo de vulnerabilidades con Snyk /////////////////////
