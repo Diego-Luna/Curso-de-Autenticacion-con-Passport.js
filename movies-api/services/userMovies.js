@@ -8,7 +8,7 @@ class UserMoviesService {
   }
 
   async getUserMovies({ userId }) {
-    // creamos un query con el user ID, 
+    // creamos un query con el user ID,
     const query = userId && { userId };
     // sacamos las peliculas del usuario
     const userMovies = await this.mongoDB.getAll(this.collection, query);
@@ -25,9 +25,16 @@ class UserMoviesService {
     return createdUserMovieId;
   }
 
-  async deleteUserMovie({ userMovieId }) {
+  // async deleteUserMovie({ userMovieId }) {
+  //   // usamos el metodo de delete de mongo, para borrar la plicula
+  //   const deletedUserMovieId = await this.mongoDB.delete(this.collection, userMovieId);
+  //
+  //   return deletedUserMovieId;
+  // }
+
+  async deleteUserMovie({ movieId, userId }) {
     // usamos el metodo de delete de mongo, para borrar la plicula
-    const deletedUserMovieId = await this.mongoDB.delete(this.collection, userMovieId);
+    const deletedUserMovieId = await this.mongoDB.delete(this.collection, movieId, userId);
 
     return deletedUserMovieId;
   }

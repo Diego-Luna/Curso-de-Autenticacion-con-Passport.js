@@ -2,7 +2,8 @@
 const joi = require('@hapi/joi');
 
 // el id de mongo aasmite un strig, de
-const userIdSchema = joi.string().regex(/^[0-9a-fA-F]{24}/);
+// const userIdSchema = joi.string().regex(/^[0-9a-fA-F]{24}/);
+const userIdSchema = joi.string().regex(/^[0-9a-fA-F]{24}$/);
 
 const userSchema = {
   name: joi.string().max(100).required(),

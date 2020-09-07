@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "DEBUG=express:*,app:* nodemon index",
+    "dev:dev": "DEBUG=app:* nodemon index",
     "start": "NODE_ENV=production node index",
     "debug": "DEBUG=express:*,app:* npm run start",
     "inspect": "DEBUG=express:*,app:* nodemon --inspect index",

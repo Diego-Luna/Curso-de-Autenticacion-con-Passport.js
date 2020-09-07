@@ -15,7 +15,7 @@ class MongoLib {
       useUnifiedTopology: true,
       useNewUrlParser: true,
     })
-    
+
     // mi base de datos ba a hacer : "DB_NAME "
     this.dbName = DB_NAME;
   }
@@ -96,17 +96,39 @@ class MongoLib {
   }
 
   // borrar
-  delete(collection, id) {
-    // retornamos con el then, nos reqgresa una instancia de la base de datos
-    return this.connect()
-      .then((db) => {
-        // retornamos la base de datos, le pasamos el nombre de la aplicacion
-        // deleteOne, para borrar con el id
-        // no es nesesario el array, por que devuelve un objeto
-        return db.collection(collection).deleteOne({ _id: ObjectId(id) });
-      })
-      .then(() => id);
+  // delete(collection, id) {
+  //   // retornamos con el then, nos reqgresa una instancia de la base de datos
+  //   return this.connect()
+  //     .then((db) => {
+  //       // retornamos la base de datos, le pasamos el nombre de la aplicacion
+  //       // deleteOne, para borrar con el id
+  //       // no es nesesario el array, por que devuelve un objeto
+  //       return db.collection(collection).deleteOne({ _id: ObjectId(id) });
+  //     })
+  //     .then(() => id);
+  // }
+
+  delete(collection, movieId ,userId) {
+
+    let UserID = userId.userId;
+    console.log(UserID);
+
+    let finalData;
+
+    // if (movieId) {
+      // const { userMovieId, userId } = data;
+
+      finalData = { userId: UserID, movieId: movieId }
+    // } else {
+      // finalData = { _id: id }
+    // }
+
+
+    return this.connect().then(db => {
+      return db.collection(collection).deleteOne(finalData)
+    }).then(() => { finalData });
   }
+
 }
 
 module.exports = MongoLib;
