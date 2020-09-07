@@ -25,16 +25,9 @@ class UserMoviesService {
     return createdUserMovieId;
   }
 
-  // async deleteUserMovie({ userMovieId }) {
-  //   // usamos el metodo de delete de mongo, para borrar la plicula
-  //   const deletedUserMovieId = await this.mongoDB.delete(this.collection, userMovieId);
-  //
-  //   return deletedUserMovieId;
-  // }
-
   async deleteUserMovie({ movieId, userId }) {
     // usamos el metodo de delete de mongo, para borrar la plicula
-    const deletedUserMovieId = await this.mongoDB.delete(this.collection, movieId, userId);
+    const deletedUserMovieId = await this.mongoDB.deleteUserMovie(this.collection, movieId, userId);
 
     return deletedUserMovieId;
   }
